@@ -35,6 +35,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class MusicFinderPlugin implements MethodCallHandler, PluginRegistry.RequestPermissionsResultListener {
   private final MethodChannel channel;
 
+  private static final String LOGTAG = MusicFinderPlugin.class.toString();
   private static final int REQUEST_CODE_STORAGE_PERMISSION = 3777;
 
   private Activity activity;
@@ -110,6 +111,14 @@ public class MusicFinderPlugin implements MethodCallHandler, PluginRegistry.Requ
   }
 
   private void checkPermission(boolean handlePermission) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+      Log.i(LOGTAG, "skipping runtime perm checks");
+      // no need for runtime permissions handling
+      pendingResult.success(getData());
+      pendingResult = null;
+      arguments = null;
+      return;
+    }
     if (checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
       if (shouldShowRequestPermissionRationale(activity, Manifest.permission.READ_EXTERNAL_STORAGE)) {
         // TODO: user should be explained why the app needs the permission
@@ -161,8 +170,10 @@ public class MusicFinderPlugin implements MethodCallHandler, PluginRegistry.Requ
 
   @TargetApi(Build.VERSION_CODES.M)
   private void requestPermissions() {
-    activity.requestPermissions(new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
-        REQUEST_CODE_STORAGE_PERMISSION);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      activity.requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+              REQUEST_CODE_STORAGE_PERMISSION);
+    }
   }
 
   private boolean shouldShowRequestPermissionRationale(Activity activity, String permission) {

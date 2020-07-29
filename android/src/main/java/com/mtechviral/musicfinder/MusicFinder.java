@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,11 +46,14 @@ public class MusicFinder {
                 MediaStore.Audio.Media.IS_MUSIC + " = 1", null, null);
 
         if (cur == null) {
+            Log.e(TAG, "NULL Cursor");
             return;
         }
         if (!cur.moveToFirst()) {
+            Log.e(TAG, "EMPTY Cursor");
             return;
         }
+        Log.d(TAG, "Cursor count:"+cur.getCount());
 
         int artistColumn = cur.getColumnIndex(MediaStore.Audio.Media.ARTIST);
         int titleColumn = cur.getColumnIndex(MediaStore.Audio.Media.TITLE);
@@ -211,7 +215,6 @@ public class MusicFinder {
             }
             mediaCursor.close();
             return uri;
-
         }
 
         public String getAlbumArt() {
@@ -249,9 +252,7 @@ public class MusicFinder {
             songsMap.put("albumArt",albumArt);
             songsMap.put("trackId", trackId);
 
-
             return songsMap;
         }
-
     }
 }
