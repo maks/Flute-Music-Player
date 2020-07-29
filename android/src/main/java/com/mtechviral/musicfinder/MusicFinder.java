@@ -63,7 +63,6 @@ public class MusicFinder {
         int idColumn = cur.getColumnIndex(MediaStore.Audio.Media._ID);
         int trackIdColumn = cur.getColumnIndex(MediaStore.Audio.Media.TRACK);
 
-        String musicDirPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath();
         do {
             String trackIdStr = cur.getString(trackIdColumn);
             int trackId = 0;
@@ -79,9 +78,8 @@ public class MusicFinder {
                     mAudioPath.get(cur.getLong(idColumn)),
                     mAlbumMap.get(cur.getLong(albumArtColumn)),
                     trackId);
-            if (song.uri.startsWith(musicDirPath)) {
-                mSongs.add(song);
-            }
+
+            mSongs.add(song);
         } while (cur.moveToNext());
 
     }
