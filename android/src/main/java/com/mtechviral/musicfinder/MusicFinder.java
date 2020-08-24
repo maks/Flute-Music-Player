@@ -66,8 +66,12 @@ public class MusicFinder {
         do {
             String trackIdStr = cur.getString(trackIdColumn);
             int trackId = 0;
-            if (!trackIdStr.isEmpty())  {
-                trackId = Integer.parseInt(trackIdStr);
+            if (trackIdStr != null && !trackIdStr.isEmpty())  {
+                try {
+                    trackId = Integer.parseInt(trackIdStr);
+                } catch(Exception e) {
+                    Log.e(TAG, "failed to parse track number string:"+trackIdStr);
+                }
             }
             Song song = new Song(
                     cur.getLong(idColumn),
